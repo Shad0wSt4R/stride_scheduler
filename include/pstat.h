@@ -10,4 +10,4 @@ struct pstat{
   int ticks[NPROC]; //the number of ticks each process has accumulated
 };
 
-#enddif//PSTAT_H_
+#endif//PSTAT_H_
