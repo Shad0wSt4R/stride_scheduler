@@ -23,7 +23,7 @@ int sys_unlink(void);
 int sys_wait(void);
 int sys_write(void);
 int sys_uptime(void);
-int sys_settickets(int tickets); //ADDED SET TICKETS HERE
-int getpinfo(struct pstat*); //ADDED GET P INFO HERE
+int sys_settickets(void); //ADDED SET TICKETS HERE
+int getpinfo(void); //ADDED GET P INFO HERE
 
 #endif // _SYSFUNC_H_
