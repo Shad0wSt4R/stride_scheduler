@@ -76,8 +76,7 @@ struct proc {
   char name[16];               // Process name (debugging)
   int numtickets;              //-------ADDED TICKET + QUEUE ITEMS HERE-----//
   int queue;                   //0=low, 1=high
-  int highticks;
-  int lowticks;                //--------END ADDED ITEMS----------//
+  int numticks;               //--------END ADDED ITEMS----------//
 };
 
 // Process memory is laid out contiguously, low addresses first:
