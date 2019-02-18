@@ -47,7 +47,7 @@ found:
   p->state = EMBRYO;
   p->pid = nextpid++;
   p->numtickets = 10; //ADDED NUMTICKETS HERE (ref proc.h)--all start w/10
-  p->numticks = 0;   //ADDED LOWTICKS HERE (ref proc.h)
+  p->numticks = 0;   //ADDED NUMTICKS HERE (ref proc.h)
   release(&ptable.lock);
 
   // Allocate kernel stack if possible.
@@ -255,6 +255,7 @@ wait(void)
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
+//NEED TO CHANGE THIS TO SCHEDULE BASED ON TICKETS + STRIDES
 void
 scheduler(void)
 {
@@ -449,9 +450,10 @@ procdump(void)
 int
 settickets(int tickets, struct proc* p) //ADDED SET TICKETS HERE
 {
-  if(tickets<0)
+  //tickets must be in range of 10 to 200 + be multiple of 10
+  if(tickets<10 || tickets>200 || tickets%10!=0) 
     {
-      return -1; //exit if <0 tickets
+      return -1; //exit if 10<tickets<200 tickets or %10!=0 (error)
     }
   p->numtickets = tickets; //set numtickets to tickets
   return 0; //exit
@@ -460,19 +462,23 @@ settickets(int tickets, struct proc* p) //ADDED SET TICKETS HERE
 int
 getpinfo(struct pstat* p_stat) //ADDED GET P INFO HERE
 {
+  if(p_stat == NULL){
+    return -1; //RETURN -1 FOR ERROR/FAILURE
+  }
   struct proc *p;
   acquire(&ptable.lock);
   int i=0;
   for(p = ptable.proc; p< &ptable.proc[NPROC]; p++){ //for each process
     if(p->state == ZOMBIE || p->state == UNUSED || p->state == EMBRYO){
-      continue; //continue if any of the above states
+      continue; //continue if any of the above states (only want in use procs)
     }
     //get the values from each process found in proc p if above criteria met
+    //should return: pid, numtickets, current pass value, stride (num tickets w/ num num times process schedules)
     p_stat->inuse[i] = 1;
     p_stat->pid[i] = p->pid;
-    p_stat->ticks[i] = p->ticks;
+    p_stat->ticks[i] = p->numticks;
     i++;
   }
   release(&ptable.lock);
-  return 0;
+  return 0; //return 0 for success
 }
