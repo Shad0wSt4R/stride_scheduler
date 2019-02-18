@@ -99,7 +99,8 @@ sys_settickets(void) //ADDED SET TICKETS HERE
   return settickets(num,proc); //settickets located in proc.c
 }
 
-int sys_getpinfo(void) //ADDED GET P INFO HERE
+int
+sys_getpinfo(void) //ADDED GET P INFO HERE
 {
   struct pstat *st;
   if(argptr(0, (void*)&st, sizeof(*st))<0)
