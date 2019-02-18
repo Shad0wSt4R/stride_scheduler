@@ -110,7 +110,7 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
-iny             settickets(int, struct proc*); //ADDED SET TICKETS HERE
+int             settickets(int, struct proc*); //ADDED SET TICKETS HERE
 int             getpinfo(struct pstat*); //ADDED GET P INFO HERE
 
 // swtch.S
