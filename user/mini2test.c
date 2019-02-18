@@ -18,7 +18,7 @@ mini2test(void){
    int info = getpinfo(&p);
    printf(2, "Here is a list");
    for(i=0;i<N;i++){
-     printf(2, "Process:: inuse: %d, tickets: %d, pid: %d, ticks: %d", p.inuse[i], p.tickets[i], p.pid[i], p.ticks[i]);
+     printf(2, "Process:: inuse: %d, tickets: %d, pid: %d, ticks: %d\n", p.inuse[i], p.tickets[i], p.pid[i], p.ticks[i]);
    }
    return info;
 }
