@@ -5,6 +5,7 @@
 #include "mmu.h"
 #include "proc.h"
 #include "sysfunc.h"
+#include "pstat.h" //ADDED PSTAT HERE
 
 int
 sys_fork(void)
@@ -87,4 +88,22 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+int
+sys_settickets(void) //ADDED SET TICKETS HERE
+{
+  int num;
+  if(argint(0, &num)<0)
+    return -1; //exit recursive function if reached "bottom"
+  return settickets(num,proc); //recursively set tickets
+}
+
+int sys_getpinfo(void) //ADDED GET P INFO HERE
+{
+  struct pstat *st;
+  if(argptr(0, (void*)&st, sizeof(*st))<0)
+    return -1;
+  getpinfo(st);
+  return 0;
 }
