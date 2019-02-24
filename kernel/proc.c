@@ -147,6 +147,7 @@ fork(void)
   np->sz = proc->sz;
   np->parent = proc;
   *np->tf = *proc->tf;
+  // np->numtickets = 
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
@@ -267,6 +268,8 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
+    int ntickets = 0;
+    int size = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
@@ -274,6 +277,9 @@ scheduler(void)
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
+      if(size > 0){
+
+      }
       proc = p;
       switchuvm(p);
       p->state = RUNNING;
