@@ -46,7 +46,8 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  p->numtickets = 10; //ADDED NUMTICKETS HERE (ref proc.h)--all start w/10
+  //(below) tickets maybe not set here but outside? need to account for children getting same as parent + not being overridden
+  // p->numtickets = 10; //ADDED NUMTICKETS HERE (ref proc.h)--all start w/10
   p->numticks = 0;   //ADDED NUMTICKS HERE (ref proc.h)
   release(&ptable.lock);
 
@@ -147,7 +148,7 @@ fork(void)
   np->sz = proc->sz;
   np->parent = proc;
   *np->tf = *proc->tf;
-  // np->numtickets = 
+  np->numtickets = proc->numtickets; //CHILD PROCESS INHERITS SAME TICKETS AS PARENT
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
