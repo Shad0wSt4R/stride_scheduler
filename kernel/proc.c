@@ -269,7 +269,7 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    int ntickets = 0;
+    //int ntickets = 0; <----------WE MAYBE NEED THESE??
     int size = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
