@@ -148,7 +148,7 @@ fork(void)
   np->sz = proc->sz;
   np->parent = proc;
   *np->tf = *proc->tf;
-  np->numtickets = proc->numtickets; //CHILD PROCESS INHERITS SAME TICKETS AS PARENT
+  settickets(proc->numtickets,np); //CHILD PROCESS INHERITS SAME TICKETS AS PARENT
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
@@ -270,7 +270,7 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     //int ntickets = 0; <----------WE MAYBE NEED THESE??
-    int size = 0;
+    int passvalue = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
@@ -278,7 +278,7 @@ scheduler(void)
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-      if(size > 0){
+      if(passvalue > 0){ //probs gotta toss/change this
 
       }
       proc = p;
