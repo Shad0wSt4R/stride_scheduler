@@ -9,6 +9,7 @@ struct pstat{
   int pid[NPROC]; //the PID of each process
   int ticks[NPROC]; //the number of ticks each process has accumulated
   int passvalue[NPROC]; //current pass value (ticks*10)*stride
+  int stride[NPROC]; //CURRENT STRIDE OF PROCESS
 };
 
 #endif//PSTAT_H_
