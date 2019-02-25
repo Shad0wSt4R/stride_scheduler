@@ -46,10 +46,10 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  //(below) tickets maybe not set here but outside? need to account for children getting same as parent + not being overridden
-  // p->numtickets = 10; //ADDED NUMTICKETS HERE (ref proc.h)--all start w/10
+  p->numtickets = 10; //ADDED NUMTICKETS HERE (ref proc.h)
   p->numticks = 0;   //ADDED NUMTICKS HERE (ref proc.h)
   p->passvalue = 0; //PADD VALUE ALWAYS STARTS AT 0
+  p->stride = 1000; //STRIDE = NUMTICKETS / 10,000
   release(&ptable.lock);
 
   // Allocate kernel stack if possible.
@@ -479,17 +479,20 @@ getpinfo(struct pstat* p_stat) //ADDED GET P INFO HERE
   acquire(&ptable.lock);
   int i=0;
   for(p = ptable.proc; p< &ptable.proc[NPROC]; p++){ //for each process
-    if(p->state == ZOMBIE || p->state == UNUSED || p->state == EMBRYO){
-      continue; //continue if any of the above states (only want in use procs)
+    if(p->state == RUNNING){
+      p_stat->inuse[i] = 1;//1 = in use
+    }
+    else{
+      p_stat->inuse[i] = 0;
     }
     //get the values from each process found in proc p if above criteria met
     //should return: pid, numtickets, current pass value, stride (num tickets w/ num num times process schedules)
-    p_stat->inuse[i] = 1;
     p_stat->pid[i] = p->pid;
-    p_stat->ticks[i] = p->numticks;
+    p_stat->tickets[i] = p->numtickets;
     p_stat->passvalue[i] = p->passvalue;
     p_stat->stride[i] = p->stride;
-    i++;
+    p_stat->ticks[i] = p->numticks;
+    i++;//move to next proc/index in array
   }
   release(&ptable.lock);
   return 0; //return 0 for success
