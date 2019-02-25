@@ -14,6 +14,8 @@ mini2test(void){
      p.tickets[i] = 0;
      p.pid[i] = -1;
      p.ticks[i] = 0;
+     p.passvalue[i] =0;
+     p.stride[i] = 0;
    }
    int info = getpinfo(&p);
    printf(2, "Here is a list of every process\n");
