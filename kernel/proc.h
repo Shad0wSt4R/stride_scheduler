@@ -75,7 +75,8 @@ struct proc {
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
   int numtickets;              //-------ADDED TICKET + QUEUE ITEMS HERE-----//
-  int queue;                   //0=low, 1=high
+  int queue;                   //might need to scheduler things
+  int passvalue;               //current pass value
   int numticks;               //--------END ADDED ITEMS----------//
 };
 
