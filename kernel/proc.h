@@ -77,6 +77,7 @@ struct proc {
   int numtickets;              //-------ADDED TICKET + QUEUE ITEMS HERE-----//
   int queue;                   //might need to scheduler things
   int passvalue;               //current pass value
+  int stride;                  //CURRENT STRIDE OF PROC
   int numticks;               //--------END ADDED ITEMS----------//
 };
 
