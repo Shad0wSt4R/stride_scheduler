@@ -49,6 +49,7 @@ found:
   //(below) tickets maybe not set here but outside? need to account for children getting same as parent + not being overridden
   // p->numtickets = 10; //ADDED NUMTICKETS HERE (ref proc.h)--all start w/10
   p->numticks = 0;   //ADDED NUMTICKS HERE (ref proc.h)
+  p->passvalue = 0; //PADD VALUE ALWAYS STARTS AT 0
   release(&ptable.lock);
 
   // Allocate kernel stack if possible.
@@ -269,8 +270,6 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    //int ntickets = 0; <----------WE MAYBE NEED THESE??
-    int passvalue = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
@@ -278,7 +277,7 @@ scheduler(void)
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-      if(passvalue > 0){ //probs gotta toss/change this
+      if(p->passvalue > 0){ //probs gotta toss/change this
 
       }
       proc = p;
@@ -484,6 +483,7 @@ getpinfo(struct pstat* p_stat) //ADDED GET P INFO HERE
     p_stat->inuse[i] = 1;
     p_stat->pid[i] = p->pid;
     p_stat->ticks[i] = p->numticks;
+    p_stat->passvalue[i] = p->passvalue;
     i++;
   }
   release(&ptable.lock);
