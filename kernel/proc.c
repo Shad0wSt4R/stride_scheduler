@@ -48,7 +48,7 @@ found:
   p->pid = nextpid++;
   p->numtickets = 10; //ADDED NUMTICKETS HERE (ref proc.h)
   p->numticks = 0;   //ADDED NUMTICKS HERE (ref proc.h)
-  p->passvalue = 0; //PADD VALUE ALWAYS STARTS AT 0
+  p->passvalue = 0; //PASS VALUE ALWAYS STARTS AT 0
   p->stride = 1000; //STRIDE = NUMTICKETS / 10,000
   release(&ptable.lock);
 
@@ -263,30 +263,33 @@ void
 scheduler(void)
 {
   struct proc *p;
- 
+  struct proc *chosenp;
+  chosenp = ptable.proc;
+  
   for(;;){
     // Enable interrupts on this processor.
     sti();
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE || p->state != RUNNING){
-	//THIGNS
-      }
-    }
 
-    
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      //get stride + passvalue for each process 
+      //p->stride = dividevalue / p->numtickets;
+      p->passvalue += p->stride;
       if(p->state != RUNNABLE)
         continue;
-
+      //if process isnt already running + has pass value lower than previous, update chosenp
+      if(chosenp->passvalue > p->passvalue){
+	chosenp = p;
+	continue;
+      }
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-      proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
+      proc = chosenp;
+      switchuvm(chosenp);
+      chosenp->state = RUNNING;
       swtch(&cpu->scheduler, proc->context);
       switchkvm();
 
