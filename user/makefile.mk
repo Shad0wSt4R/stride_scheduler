@@ -18,6 +18,8 @@ USER_PROGS := \
 	wc\
 	zombie\
 	mini2test\
+	stridescheduler\
+	callpinfo\
 
 USER_PROGS := $(addprefix user/, $(USER_PROGS))
 
