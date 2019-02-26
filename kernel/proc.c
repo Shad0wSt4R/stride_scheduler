@@ -49,7 +49,7 @@ found:
   p->numtickets = 10; //ADDED NUMTICKETS HERE (ref proc.h)
   p->numticks = 0;   //ADDED NUMTICKS HERE (ref proc.h)
   p->passvalue = 0; //PASS VALUE ALWAYS STARTS AT 0
-  p->stride = 1000; //STRIDE = NUMTICKETS / 10,000
+  p->stride = 10000/p->numtickets; //STRIDE = NUMTICKETS / 10,000
   release(&ptable.lock);
 
   // Allocate kernel stack if possible.
@@ -263,41 +263,45 @@ void
 scheduler(void)
 {
   struct proc *p;
+  struct proc *p1;
   struct proc *chosenp;
-  chosenp = ptable.proc;
-  
+    
   for(;;){
     // Enable interrupts on this processor.
     sti();
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      //get stride + passvalue for each process 
-      //p->stride = dividevalue / p->numtickets;
-      p->passvalue += p->stride;
       if(p->state != RUNNABLE)
         continue;
+      
       //if process isnt already running + has pass value lower than previous, update chosenp
-      if(chosenp->passvalue > p->passvalue){
-	chosenp = p;
-	continue;
+      p->passvalue = p->numticks * p->stride;
+      chosenp = p;
+      for(p1 = ptable.proc; p1< &ptable.proc[NPROC]; p1++){
+	p1->passvalue = p1->numticks * p1->stride;
+      
+         if(p1->state == RUNNABLE && chosenp->passvalue > p1->passvalue){
+	   chosenp = p1;
+	   continue;
+	 }
       }
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
+
+      // Switch to chosen process.  It is the process's job                    
+      // to release ptable.lock and then reacquire it                          
+      // before jumping back to us.                                           
       proc = chosenp;
       switchuvm(chosenp);
       chosenp->state = RUNNING;
       swtch(&cpu->scheduler, proc->context);
       switchkvm();
 
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
+      // Process is done running for now.                                     
+      // It should have changed its p->state before coming back.              
       proc = 0;
     }
-    release(&ptable.lock);
+      release(&ptable.lock);
 
   }
 }
@@ -469,6 +473,7 @@ settickets(int tickets, struct proc* p) //ADDED SET TICKETS HERE
       return -1; //exit if 10<tickets<200 tickets or %10!=0 (error)
     }
   p->numtickets = tickets; //set numtickets to tickets
+  p->stride = 10000/tickets; //set stride
   return 0; //exit
 }
 
