@@ -96,7 +96,7 @@ sys_settickets(void) //ADDED SET TICKETS HERE
   int num;
   if(argint(0, &num)<0)
     return -1; //exit recursive function if reached "bottom"
-  return settickets(num,proc); //settickets located in proc.c
+  return settickets(num); //settickets located in proc.c
 }
 
 int

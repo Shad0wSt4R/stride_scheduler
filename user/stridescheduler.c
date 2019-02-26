@@ -10,20 +10,18 @@ int main(){
   x=0;
   id=0;
   
-  for(i=1;i<5;i++){
+  for(i=1;i<6;i++){
     id=fork();
     if(id<0){ //fork failure check
-      printf(1,"%d ,Fork failed\n",getpid());
+      printf(1,"%d ,Fork failed\n");
+	 return -1;
     }
-    else if(id>0){ //parent
+    else if(id==0){		//child
       settickets(i*10);
       printf(1,"%d forked child %d\n",getpid(),id);
-    }
-    else{//child
-      for(;;){
-	x++;
-      }
-      break;
+      for(;;)
+		x++;
     }
   }
+  exit();
 }

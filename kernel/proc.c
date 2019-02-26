@@ -149,7 +149,7 @@ fork(void)
   np->sz = proc->sz;
   np->parent = proc;
   *np->tf = *proc->tf;
-  settickets(proc->numtickets,np); //CHILD PROCESS INHERITS SAME TICKETS AS PARENT
+  np->numtickets = proc->numtickets; //CHILD PROCESS INHERITS SAME TICKETS AS PARENT
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
@@ -277,10 +277,10 @@ scheduler(void)
         continue;
       
       //if process isnt already running + has pass value lower than previous, update chosenp
-      p->passvalue = p->numticks * p->stride;
+      //p->passvalue = p->numticks * p->stride;
       chosenp = p;
       for(p1 = ptable.proc; p1< &ptable.proc[NPROC]; p1++){
-	p1->passvalue = p1->numticks * p1->stride;
+	//p1->passvalue = p1->numticks * p1->stride;
       
          if(p1->state == RUNNABLE && chosenp->passvalue > p1->passvalue){
 	   chosenp = p1;
@@ -292,6 +292,7 @@ scheduler(void)
       // to release ptable.lock and then reacquire it                          
       // before jumping back to us.                                           
       proc = chosenp;
+	 proc->passvalue += proc->stride;
       switchuvm(chosenp);
       chosenp->state = RUNNING;
       swtch(&cpu->scheduler, proc->context);
@@ -465,15 +466,15 @@ procdump(void)
 }
 
 int
-settickets(int tickets, struct proc* p) //ADDED SET TICKETS HERE
+settickets(int tickets) //ADDED SET TICKETS HERE
 {
   //tickets must be in range of 10 to 200 + be multiple of 10
   if(tickets<10 || tickets>200 || tickets%10!=0) 
     {
       return -1; //exit if 10<tickets<200 tickets or %10!=0 (error)
     }
-  p->numtickets = tickets; //set numtickets to tickets
-  p->stride = 10000/tickets; //set stride
+  proc->numtickets = tickets; //set numtickets to tickets
+  proc->stride = 10000/tickets; //set stride
   return 0; //exit
 }
 
